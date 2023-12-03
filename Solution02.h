@@ -17,6 +17,7 @@ class Solution02 {
         int blueNum;
         void processPairValues(vector<string> &termVector);
         void verifyGame();
+        void addGamePower();
 };
 
 #endif

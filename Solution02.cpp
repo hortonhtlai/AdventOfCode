@@ -23,7 +23,8 @@ int Solution02::solve(string &input) {
             stringSplitter.split(termVector, pair, {' '});
             processPairValues(termVector);
         }
-        verifyGame();
+        // verifyGame();
+        addGamePower();
     }
     return sum;
 };
@@ -55,3 +56,7 @@ void Solution02::verifyGame() {
         sum = sum + gameNum;
     }
 };
+
+void Solution02::addGamePower() {
+    sum = sum + redNum * greenNum * blueNum;
+}
