@@ -10,7 +10,7 @@ class Solution01 {
         int solve(string &input);
 
     private:
-        int sum = 0;
+        int sum;
         void addCaliValue(string &caliDatapt);
         int getDigitIfValid(string &caliDatapt, int index);
 };

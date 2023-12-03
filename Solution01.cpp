@@ -8,6 +8,7 @@
 using namespace std;
 
 int Solution01::solve(string &input) {
+    sum = 0;
     StringSplitter stringSplitter;
     vector<string> caliVector;
     stringSplitter.split(caliVector, input, {'\n'});
