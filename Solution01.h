@@ -7,9 +7,12 @@ using namespace std;
 
 class Solution01 {
     public:
-        int solve(string input);
+        int solve(string &input);
+
     private:
         int sum = 0;
+        void addCaliValue(string &caliDatapt);
+        int getDigitIfValid(string &caliDatapt, int index);
 };
 
 #endif
