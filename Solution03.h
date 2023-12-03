@@ -10,14 +10,14 @@ using namespace std;
 class Solution03 {
     public:
         int solve(string &input);
-        
+
     private:
         int sum;
         vector<vector<char>> schematic;
-        set<pair<int, int>> symbolSet;
+        set<pair<int, int>> gearSet;
         void generateSchematic(string &input);
-        void searchAndClearBorder();
-        void AddAndClearNumber(int rowNum, int colNum);
+        void searchBorderAndAddIfGear();
+        int getPartNum(vector<vector<bool>> &border, int gearRow, int gearCol, int rowDiff, int colDiff);
 };
 
 #endif
