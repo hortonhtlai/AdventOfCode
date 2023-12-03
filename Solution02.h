@@ -9,6 +9,7 @@ using namespace std;
 class Solution02 {
     public:
         int solve(string &input);
+        
     private:
         int sum;
         int gameNum;
