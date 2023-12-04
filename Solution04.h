@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -12,7 +13,11 @@ class Solution04 {
     
     private:
         int sum;
-        void addCardPoints(vector<string> &winningVector, vector<string> &chosenVector);
+        int cardNum;
+        unordered_map<int, int> cardPile;
+        void winAndAddCopies(vector<string> &winningVector, vector<string> &chosenVector);
+        void setAndAddOriginals(vector<string> &headerVector);
+        void addCard(int newCardNum, int newCardCount);
 };
 
 #endif

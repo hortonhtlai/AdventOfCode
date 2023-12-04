@@ -16,29 +16,48 @@ int Solution04::solve(string &input) {
     for (string card : cardVector) {
         vector<string> listVector;
         stringSplitter.split(listVector, card, {':', '|'});
+        vector<string> headerVector;
+        stringSplitter.split(headerVector, listVector[0], {' '});
+        setAndAddOriginals(headerVector);
         vector<string> winningVector;
         stringSplitter.split(winningVector, listVector[1], {' '});
         vector<string> chosenVector;
         stringSplitter.split(chosenVector, listVector[2], {' '});
-        addCardPoints(winningVector, chosenVector);
+        winAndAddCopies(winningVector, chosenVector);
+    }
+    for (unordered_map<int, int>::iterator mapIterator = cardPile.begin(); mapIterator != cardPile.end(); mapIterator++) {
+        sum = sum + mapIterator->second;
     }
     return sum;
 };
 
-void Solution04::addCardPoints(vector<string> &winningVector, vector<string> &chosenVector) {
+void Solution04::winAndAddCopies(vector<string> &winningVector, vector<string> &chosenVector) {
     unordered_set<string> winningSet;
     for (string num : winningVector) {
         winningSet.insert(num);
     }
-    int points = 0;
+    int matches = 0;
     for (string num : chosenVector) {
         if (winningSet.find(num) != winningSet.end()) {
-            if (points == 0) {
-                points = 1;
-            } else {
-                points = points << 1;
-            }
+            matches++;
         }
     }
-    sum = sum + points;
+    for (int i = 1; i <= matches; i++) {
+        addCard(cardNum + i, cardPile[cardNum]);
+    }
 };
+
+void Solution04::setAndAddOriginals(vector<string> &headerVector) {
+    if (headerVector[0] == "Card") {
+        cardNum = stoi(headerVector[1]);
+        addCard(cardNum, 1);
+    }
+};
+
+void Solution04::addCard(int newCardNum, int newCardCount) {
+    if (cardPile.find(newCardNum) == cardPile.end()) {
+        cardPile[newCardNum] = newCardCount;
+    } else {
+        cardPile[newCardNum] = cardPile[newCardNum] + newCardCount;
+    }
+}
