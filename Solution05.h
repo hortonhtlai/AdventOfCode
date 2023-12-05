@@ -13,10 +13,11 @@ class Solution05 {
     private:
         long long minNum;
         string category;
-        vector<long long> collection;
+        vector<pair<long long, long long>> collection;
         void processSection(string &section);
         void setSeed(string &seeds);
         void convertCategory(vector<string> &headedVector);
+        void cutRangeIfNeeded(pair<long long, long long> &identifierRange, const pair<long long, long long> &sourceRange);
 };
 
 #endif
