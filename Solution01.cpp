@@ -11,7 +11,7 @@ int Solution01::solve(string &input) {
     sum = 0;
     StringSplitter stringSplitter;
     vector<string> caliVector;
-    stringSplitter.split(caliVector, input, {'\n'});
+    stringSplitter.split(caliVector, input, {"\n"});
     for (string caliData : caliVector) {
         addCaliValue(caliData);
     }

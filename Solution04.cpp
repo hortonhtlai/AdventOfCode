@@ -12,17 +12,17 @@ int Solution04::solve(string &input) {
     sum = 0;
     StringSplitter stringSplitter;
     vector<string> cardVector;
-    stringSplitter.split(cardVector, input, {'\n'});
+    stringSplitter.split(cardVector, input, {"\n"});
     for (string card : cardVector) {
         vector<string> listVector;
-        stringSplitter.split(listVector, card, {':', '|'});
+        stringSplitter.split(listVector, card, {":", "|"});
         vector<string> headerVector;
-        stringSplitter.split(headerVector, listVector[0], {' '});
+        stringSplitter.split(headerVector, listVector[0], {" "});
         setAndAddOriginals(headerVector);
         vector<string> winningVector;
-        stringSplitter.split(winningVector, listVector[1], {' '});
+        stringSplitter.split(winningVector, listVector[1], {" "});
         vector<string> chosenVector;
-        stringSplitter.split(chosenVector, listVector[2], {' '});
+        stringSplitter.split(chosenVector, listVector[2], {" "});
         winAndAddCopies(winningVector, chosenVector);
     }
     for (unordered_map<int, int>::iterator mapIterator = cardPile.begin(); mapIterator != cardPile.end(); mapIterator++) {

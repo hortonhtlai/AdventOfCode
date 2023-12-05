@@ -12,16 +12,16 @@ int Solution02::solve(string &input) {
     sum = 0;
     StringSplitter stringSplitter;
     vector<string> gameVector;
-    stringSplitter.split(gameVector, input, {'\n'});
+    stringSplitter.split(gameVector, input, {"\n"});
     for (string game : gameVector) {
         redNum = 0;
         greenNum = 0;
         blueNum = 0;
         vector<string> pairVector;
-        stringSplitter.split(pairVector, game, {':', ',', ';'});
+        stringSplitter.split(pairVector, game, {":", ",", ";"});
         for (string pair : pairVector) {
             vector<string> termVector;
-            stringSplitter.split(termVector, pair, {' '});
+            stringSplitter.split(termVector, pair, {" "});
             processPairValues(termVector);
         }
         // verifyGame();

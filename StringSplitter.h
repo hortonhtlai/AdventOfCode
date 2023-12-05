@@ -9,7 +9,10 @@ using namespace std;
 
 class StringSplitter {
     public:
-        void split(vector<string> &output, const string &input, const vector<char> &delimiters);
+        void split(vector<string> &output, const string &input, const vector<string> &delimiters);
+    
+    private:
+        string check(int index, const string &input, const vector<string> &delimiters);
 };
 
 #endif
