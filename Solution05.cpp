@@ -5,15 +5,15 @@
 #include <algorithm>
 
 #include "Solution05.h"
-#include "StringSplitter.h"
+#include "StringParser.h"
 
 using namespace std;
 
 long long Solution05::solve(string &input) {
     minNum = LONG_LONG_MAX;
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> sectionVector;
-    stringSplitter.split(sectionVector, input, {"\n\n"});
+    stringParser.split(sectionVector, input, {"\n\n"});
     for (string section : sectionVector) {
         processSection(section);
     }
@@ -24,9 +24,9 @@ long long Solution05::solve(string &input) {
 };
 
 void Solution05::processSection(string &section) {
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> headeredVector;
-    stringSplitter.split(headeredVector, section, {":", "\n"});
+    stringParser.split(headeredVector, section, {":", "\n"});
     if (headeredVector[0] == "seeds") {
         setSeed(headeredVector[1]);
     } else {
@@ -36,9 +36,9 @@ void Solution05::processSection(string &section) {
 
 void Solution05::setSeed(string &seeds) {
     category = "seed";
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> seedVector;
-    stringSplitter.split(seedVector, seeds, {" "});
+    stringParser.split(seedVector, seeds, {" "});
     for (unsigned int i = 0; i < seedVector.size(); i = i+2) {
         long long identifierBegin = stoll(seedVector[i]);
         long long identifierEnd =identifierBegin + stoll(seedVector[i+1]);
@@ -47,9 +47,9 @@ void Solution05::setSeed(string &seeds) {
 };
 
 void Solution05::convertCategory(vector<string> &headeredVector) {
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> termVector;
-    stringSplitter.split(termVector, headeredVector[0], {"-to-", " "});
+    stringParser.split(termVector, headeredVector[0], {"-to-", " "});
     if (termVector[0] == category) {
         category = termVector[1];
     }
@@ -57,7 +57,7 @@ void Solution05::convertCategory(vector<string> &headeredVector) {
     unordered_map<long long, pair<long long, long long>> conversionTable;
     for (unsigned int i = 1; i < headeredVector.size(); i++) {
         termVector = vector<string>();
-        stringSplitter.split(termVector, headeredVector[i], {" "});
+        stringParser.split(termVector, headeredVector[i], {" "});
         long long destination = stoll(termVector[0]);
         long long sourceBegin = stoll(termVector[1]);
         long long sourceEnd = sourceBegin + stoll(termVector[2]);

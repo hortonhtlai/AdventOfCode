@@ -4,24 +4,24 @@
 #include <algorithm>
 
 #include "Solution02.h"
-#include "StringSplitter.h"
+#include "StringParser.h"
 
 using namespace std;
 
 int Solution02::solve(string &input) {
     sum = 0;
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> gameVector;
-    stringSplitter.split(gameVector, input, {"\n"});
+    stringParser.split(gameVector, input, {"\n"});
     for (string game : gameVector) {
         redNum = 0;
         greenNum = 0;
         blueNum = 0;
         vector<string> pairVector;
-        stringSplitter.split(pairVector, game, {":", ",", ";"});
+        stringParser.split(pairVector, game, {":", ",", ";"});
         for (string pair : pairVector) {
             vector<string> termVector;
-            stringSplitter.split(termVector, pair, {" "});
+            stringParser.split(termVector, pair, {" "});
             processPairValues(termVector);
         }
         // verifyGame();

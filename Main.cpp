@@ -2,7 +2,7 @@
 #include <string>
 
 #include "Solution06.h"
-#include "StringSplitter.h"
+#include "StringParser.h"
 
 using namespace std;
 

@@ -8,12 +8,12 @@ using namespace std;
 
 class Solution06 {
     public:
-        int solve(string &input);
+        long long solve(string &input);
     
     private:
-        int product;
-        vector<int> timeVector;
-        vector<int> distanceVector;
+        long long product;
+        vector<long long> timeVector;
+        vector<long long> distanceVector;
         void multiplyWinWays();
 };
 

@@ -4,25 +4,25 @@
 #include <unordered_set>
 
 #include "Solution04.h"
-#include "StringSplitter.h"
+#include "StringParser.h"
 
 using namespace std;
 
 int Solution04::solve(string &input) {
     sum = 0;
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> cardVector;
-    stringSplitter.split(cardVector, input, {"\n"});
+    stringParser.split(cardVector, input, {"\n"});
     for (string card : cardVector) {
         vector<string> listVector;
-        stringSplitter.split(listVector, card, {":", "|"});
+        stringParser.split(listVector, card, {":", "|"});
         vector<string> headerVector;
-        stringSplitter.split(headerVector, listVector[0], {" "});
+        stringParser.split(headerVector, listVector[0], {" "});
         setAndAddOriginals(headerVector);
         vector<string> winningVector;
-        stringSplitter.split(winningVector, listVector[1], {" "});
+        stringParser.split(winningVector, listVector[1], {" "});
         vector<string> chosenVector;
-        stringSplitter.split(chosenVector, listVector[2], {" "});
+        stringParser.split(chosenVector, listVector[2], {" "});
         winAndAddCopies(winningVector, chosenVector);
     }
     for (unordered_map<int, int>::iterator mapIterator = cardPile.begin(); mapIterator != cardPile.end(); mapIterator++) {

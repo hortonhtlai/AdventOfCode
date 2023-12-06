@@ -1,17 +1,17 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "Solution01.h"
-#include "StringSplitter.h"
+#include "StringParser.h"
 
 using namespace std;
 
 int Solution01::solve(string &input) {
     sum = 0;
-    StringSplitter stringSplitter;
+    StringParser stringParser;
     vector<string> caliVector;
-    stringSplitter.split(caliVector, input, {"\n"});
+    stringParser.split(caliVector, input, {"\n"});
     for (string caliData : caliVector) {
         addCaliValue(caliData);
     }
