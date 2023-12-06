@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -Wall -g
 OBJDIR = objects
-SOLNUM = 05
+SOLNUM = 06
 
 main: $(OBJDIR)/Main.o $(OBJDIR)/Solution$(SOLNUM).o $(OBJDIR)/StringSplitter.o
 	$(CC) $(CFLAGS) -o main $^
