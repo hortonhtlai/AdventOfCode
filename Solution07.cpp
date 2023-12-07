@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -7,6 +8,22 @@
 #include "StringParser.h"
 
 using namespace std;
+
+void addWildCards(unordered_map<int, int> &frequencyPattern) {
+    if (frequencyPattern.find(-1) != frequencyPattern.end()) {
+        int numWildCards = frequencyPattern[-1];
+        int patternMax = 0;
+        for (auto mapIterator = frequencyPattern.begin(); mapIterator != frequencyPattern.end(); mapIterator++) {
+            patternMax = max(patternMax, mapIterator->first);
+        }
+        frequencyPattern[patternMax] = frequencyPattern[patternMax] - 1;
+        if (frequencyPattern.find(patternMax + numWildCards) == frequencyPattern.end()) {
+            frequencyPattern[patternMax + numWildCards] = 1;
+        } else {
+            frequencyPattern[patternMax + numWildCards] = frequencyPattern[patternMax + numWildCards] + 1;
+        }
+    }
+}
 
 int getTypeStrength(string &hand) {
     unordered_map<char, int> cardFrequency;
@@ -19,13 +36,18 @@ int getTypeStrength(string &hand) {
         }
     }
     for (auto mapIterator = cardFrequency.begin(); mapIterator != cardFrequency.end(); mapIterator++) {
-        int frequency = cardFrequency[mapIterator->first];
-        if (frequencyPattern.find(frequency) == frequencyPattern.end()) {
-            frequencyPattern[frequency] = 1;
+        if (mapIterator->first == 'J') {
+            frequencyPattern[-1] = cardFrequency[mapIterator->first];
         } else {
-            frequencyPattern[frequency] = frequencyPattern[frequency] + 1;
+            int frequency = cardFrequency[mapIterator->first];
+            if (frequencyPattern.find(frequency) == frequencyPattern.end()) {
+                frequencyPattern[frequency] = 1;
+            } else {
+                frequencyPattern[frequency] = frequencyPattern[frequency] + 1;
+            }
         }
     }
+    addWildCards(frequencyPattern);
     if (frequencyPattern[5] == 1) return 6;
     if (frequencyPattern[4] == 1 && frequencyPattern[1] == 1) return 5;
     if (frequencyPattern[3] == 1 && frequencyPattern[2] == 1) return 4;
@@ -37,7 +59,7 @@ int getTypeStrength(string &hand) {
 };
 
 int getCardStrength(char &card) {
-    vector<char> cardHierarchy = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'};
+    vector<char> cardHierarchy = {'J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A'};
     for (unsigned int i = 0; i < cardHierarchy.size(); i++) {
         if (card == cardHierarchy[i]) {
             return i;
@@ -75,6 +97,7 @@ int Solution07::solve(string &input) {
     }
     sort(pairs.begin(), pairs.end(), compare);
     for (unsigned int i = 0; i < pairs.size(); i++) {
+        // cout << pairs[i].first << endl;
         sum = sum + pairs[i].second * (i + 1);
     }
     return sum;
