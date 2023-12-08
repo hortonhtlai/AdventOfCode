@@ -8,8 +8,8 @@
 
 using namespace std;
 
-int Solution08::solve(string &input) {
-    count = 0;
+long long Solution08::solve(string &input) {
+    // count = 0;
     StringParser stringParser;
     vector<string> lineVector;
     stringParser.split(lineVector, input, {"\n"});
@@ -21,7 +21,7 @@ int Solution08::solve(string &input) {
     }
     generateShortcut();
     traverseNetwork();
-    return count;
+    return findLCM() * instructions.length();
 };
 
 void Solution08::generateShortcut() {
@@ -39,9 +39,34 @@ void Solution08::generateShortcut() {
 };
 
 void Solution08::traverseNetwork() {
-    string position = "AAA";
-    while (position != "ZZZ") {
-        position = shortcut[position];
-        count = count + instructions.length();
+    for (auto mapIterator = shortcut.begin(); mapIterator != shortcut.end(); mapIterator++) {
+        if (mapIterator->first.at(2) == 'A') {
+            string position = mapIterator->first;
+            int jump = 0;
+            while (position.at(2) != 'Z') {
+                position = shortcut[position];
+                jump++;
+            }
+            count.push_back(jump);
+        }
     }
+};
+
+long long Solution08::findLCM() {
+    long long lcm = 1;
+    long long factorProduct = 1;
+    for (long long jump : count) {
+        long long testFactor = 2;
+        while (testFactor <= lcm && testFactor <= jump) {
+            if (lcm % testFactor == 0 && jump % testFactor == 0) {
+                lcm = lcm / testFactor;
+                jump = jump / testFactor;
+                factorProduct = factorProduct * testFactor;
+            } else {
+                testFactor++;
+            }
+        }
+        lcm = lcm * jump;
+    }
+    return lcm * factorProduct;
 };
