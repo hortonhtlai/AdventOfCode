@@ -15,33 +15,35 @@ int Solution09::solve(string &input) {
     for (string history : historyVector) {
         vector<string> readingVector;
         stringParser.split(readingVector, history, {" "});
-        addNextPrediction(readingVector);
+        addPreviousPrediction(readingVector);
     }
     return sum;
 };
 
-void Solution09::addNextPrediction(vector<string> &readingVector) {
-    vector<int> oldVector;
-    bool oldFlag = true;
+void Solution09::addPreviousPrediction(vector<string> &readingVector) {
+    vector<int> oriNumVector;
+    bool oriZeroFlag = true;
     for (string reading : readingVector) {
-        oldVector.push_back(stoi(reading));
+        oriNumVector.push_back(stoi(reading));
         if (stoi(reading) != 0) {
-            oldFlag = false;
+            oriZeroFlag = false;
         }
     }
-    vector<int> newVector;
-    bool newFlag = true;
-    while (oldFlag == false) {
-        sum = sum + oldVector[oldVector.size() - 1];
-        for (unsigned int i = 1; i < oldVector.size(); i++) {
-            newVector.push_back(oldVector[i] - oldVector[i - 1]);
-            if (oldVector[i] - oldVector[i - 1] != 0) {
-                newFlag = false;
+    sum = sum + getPreviousValue(oriNumVector, oriZeroFlag);
+};
+
+int Solution09::getPreviousValue(vector<int> &oldNumberVector, bool oldZeroFlag) {
+    if (oldZeroFlag == true) {
+        return 0;
+    } else {
+        vector<int> newNumVector;
+        bool newZeroFlag = true;
+        for (unsigned int i = 1; i < oldNumberVector.size(); i++) {
+            newNumVector.push_back(oldNumberVector[i] - oldNumberVector[i - 1]);
+            if (oldNumberVector[i] - oldNumberVector[i - 1]) {
+                newZeroFlag = false;
             }
         }
-        oldVector = newVector;
-        oldFlag = newFlag;
-        newVector = vector<int>();
-        newFlag = true;
+        return oldNumberVector[0] - getPreviousValue(newNumVector, newZeroFlag);
     }
-}
+};

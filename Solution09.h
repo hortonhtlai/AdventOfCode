@@ -12,7 +12,8 @@ class Solution09 {
 
     private:
         int sum;
-        void addNextPrediction(vector<string> &readingVector);
+        void addPreviousPrediction(vector<string> &readingVector);
+        int getPreviousValue(vector<int> &oldNumberVector, bool oldZeroFlag);
 };
 
 #endif
