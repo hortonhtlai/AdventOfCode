@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "Solution10.h"
 #include "StringParser.h"
@@ -9,26 +10,30 @@ using namespace std;
 
 int Solution10::solve(string &input) {
     loopLength = 0;
+    tiles = 0;
     StringParser stringParser;
     stringParser.map(field, input);
     for (unsigned int rowNum = 0; rowNum < field.size() && loopLength == 0; rowNum++) {
         for (unsigned int colNum = 0; colNum < field[rowNum].size() && loopLength == 0; colNum++) {
             if (field[rowNum][colNum] == 'S') {
-                followPipeLoop(rowNum, colNum);
+                startRow = rowNum;
+                startCol = colNum;
+                followPipeLoop();
             }
         }
     }
-    return loopLength / 2;
+    countTiles();
+    return tiles;
 };
 
-void Solution10::followPipeLoop(int startRow, int startCol) {
-    pair<int, int> initPipe = initPipeStart(startRow, startCol);
+void Solution10::followPipeLoop() {
+    initStartPipe(startRow, startCol);
     int prevRow = startRow;
     int prevCol = startCol;
-    int currRow = initPipe.first;
-    int currCol = initPipe.second;
-    loopLength = 1;
-    while (field[currRow][currCol] != 'S') {
+    int currRow = startRow;
+    int currCol = startCol;
+    while (loopLength == 0 || currRow != startRow || currCol != startCol) {
+        pipeSet.insert(currRow * field[0].size() + currCol);
         vector<pair<int, int>> linkedPipes;
         followPipePart(linkedPipes, currRow, currCol);
         int nextRow;
@@ -48,36 +53,85 @@ void Solution10::followPipeLoop(int startRow, int startCol) {
     }
 };
 
-pair<int, int> Solution10::initPipeStart(int startRow, int startCol) {
+void Solution10::initStartPipe(int startRow, int startCol) {
+    bool north = false;
+    bool south = false;
+    bool east = false;
+    bool west = false;
     if (startRow > 0) {
-        if (field[startRow - 1][startCol] == '|' || field[startRow - 1][startCol] == '7' || field[startRow - 1][startCol] == 'F') {
-            return pair<int, int>(startRow - 1, startCol);
-        }
+        north = southLinked(startRow - 1, startCol);
     }
     if (startRow < (int) field.size() - 1) {
-        if (field[startRow + 1][startCol] == '|' || field[startRow + 1][startCol] == 'L' || field[startRow + 1][startCol] == 'J') {
-            return pair<int, int>(startRow + 1, startCol);
-        }
+        south = northLinked(startRow + 1, startCol);
     }
     if (startCol > 0) {
-        if (field[startRow][startCol - 1] == '-' || field[startRow][startCol - 1] == 'L' || field[startRow][startCol - 1] == 'F') {
-            return pair<int, int>(startRow, startCol - 1);
-        }
+        west = eastLinked(startRow, startCol - 1);
     }
-    return pair<int, int>(startRow, startCol + 1);
+    if (startCol < (int) field[startRow].size() - 1) {
+        east = westLinked(startRow, startCol + 1);
+    }
+    if (north && south) field[startRow][startCol] = '|';
+    if (east && west) field[startRow][startCol] = '-';
+    if (north && east) field[startRow][startCol] = 'L';
+    if (north && west) field[startRow][startCol] = 'J';
+    if (south && west) field[startRow][startCol] = '7';
+    if (south && east) field[startRow][startCol] = 'F';
 }
 
 void Solution10::followPipePart(vector<pair<int, int>> &output, int rowNum, int colNum) {
-    if (field[rowNum][colNum] == '|' || field[rowNum][colNum] == 'L' || field[rowNum][colNum] == 'J') {
+    if (northLinked(rowNum, colNum)) {
         output.push_back(pair<int, int>(rowNum - 1, colNum));
     }
-    if (field[rowNum][colNum] == '|' || field[rowNum][colNum] == '7' || field[rowNum][colNum] == 'F') {
+    if (southLinked(rowNum, colNum)) {
         output.push_back(pair<int, int>(rowNum + 1, colNum));
     }
-    if (field[rowNum][colNum] == '-' || field[rowNum][colNum] == 'J' || field[rowNum][colNum] == '7') {
+    if (westLinked(rowNum, colNum)) {
         output.push_back(pair<int, int>(rowNum, colNum - 1));
     }
-    if (field[rowNum][colNum] == '-' || field[rowNum][colNum] == 'L' || field[rowNum][colNum] == 'F') {
+    if (eastLinked(rowNum, colNum)) {
         output.push_back(pair<int, int>(rowNum, colNum + 1));
     }
 };
+
+void Solution10::countTiles() {
+    for (unsigned int rowNum = 0; rowNum < field.size(); rowNum++) {
+        bool enclosed = false;
+        bool north = false;
+        bool south = false;
+        for (unsigned int colNum = 0; colNum < field[rowNum].size(); colNum++) {
+            if (pipeSet.find(rowNum * field[0].size() + colNum) == pipeSet.end() && enclosed == true) {
+                tiles++;
+            } else if (pipeSet.find(rowNum * field[0].size() + colNum) != pipeSet.end()) {
+                if (!westLinked(rowNum, colNum)) {
+                    north = false;
+                    south = false;
+                }
+                if (northLinked(rowNum, colNum)) {
+                    north = true;
+                }
+                if (southLinked(rowNum, colNum)) {
+                    south = true;
+                }
+                if (north && south) {
+                    enclosed = !enclosed;
+                }
+            }
+        }
+    }
+}
+
+bool Solution10::northLinked(int rowNum, int colNum) {
+    return field[rowNum][colNum] == '|' || field[rowNum][colNum] == 'L' || field[rowNum][colNum] == 'J';
+}
+
+bool Solution10::southLinked(int rowNum, int colNum) {
+    return field[rowNum][colNum] == '|' || field[rowNum][colNum] == '7' || field[rowNum][colNum] == 'F';
+}
+
+bool Solution10::eastLinked(int rowNum, int colNum) {
+    return field[rowNum][colNum] == '-' || field[rowNum][colNum] == 'L' || field[rowNum][colNum] == 'F';
+}
+
+bool Solution10::westLinked(int rowNum, int colNum) {
+    return field[rowNum][colNum] == '-' || field[rowNum][colNum] == 'J' || field[rowNum][colNum] == '7';
+}

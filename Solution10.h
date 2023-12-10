@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 using namespace std;
 
@@ -12,10 +13,19 @@ class Solution10 {
 
     private:
         int loopLength;
+        int startRow;
+        int startCol;
+        int tiles;
         vector<vector<char>> field;
-        pair<int, int> initPipeStart(int rowNum, int colNum);
+        unordered_set<int> pipeSet;
+        void followPipeLoop();
+        void initStartPipe(int rowNum, int colNum);
         void followPipePart(vector<pair<int, int>> &output, int rowNum, int colNum);
-        void followPipeLoop(int startRow, int startCol);
+        void countTiles();
+        bool northLinked(int rowNum, int colNum);
+        bool southLinked(int rowNum, int colNum);
+        bool eastLinked(int rowNum, int colNum);
+        bool westLinked(int rowNum, int colNum);
 };
 
 #endif
