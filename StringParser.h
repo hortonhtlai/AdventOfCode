@@ -11,6 +11,7 @@ class StringParser {
     public:
         void split(vector<string> &output, const string &input, const vector<string> &delimiters);
         string remove(const string &input, const vector<string> &fillers);
+        void map(vector<vector<char>> &output, const string &input);
     
     private:
         string check(int index, const string &input, const vector<string> &targets);

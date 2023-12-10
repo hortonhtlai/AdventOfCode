@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <set>
 
 using namespace std;
 
@@ -14,9 +13,7 @@ class Solution03 {
     private:
         int sum;
         vector<vector<char>> schematic;
-        set<pair<int, int>> gearSet;
-        void generateSchematic(string &input);
-        void searchBorderAndAddIfGear();
+        void searchBorderAndAddIfGear(int gearRow, int gearCol);
         int getPartNum(vector<vector<bool>> &border, int gearRow, int gearCol, int rowDiff, int colDiff);
 };
 
