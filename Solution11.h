@@ -3,18 +3,21 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 using namespace std;
 
 class Solution11 {
     public:
-        int solve(string &input);
+        long long solve(string &input);
     
     private:
-        int sum;
+        long long sum;
         vector<vector<char>> image;
-        vector<pair<int, int>> galaxyVector;
-        void expandImage();
+        set<int> galaxyRowSet;
+        set<int> galaxyColSet;
+        vector<pair<long long, long long>> galaxyVector;
+        void expandCoords();
         void addGalaxyDistance();
 };
 
