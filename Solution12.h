@@ -3,16 +3,19 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
 class Solution12 {
     public:
-        int solve(string &input);
+        long long solve(string &input);
     
     private:
-        int sum;
-        int getNumArrangements(string record, vector<int> groupVector);
+        long long sum;
+        unordered_map<string, long long> cache;
+        long long getNumArrangements(string record, vector<int> sizeVector);
+        void unfoldConditions(string &record, vector<int> &sizeVector);
 };
 
 #endif
