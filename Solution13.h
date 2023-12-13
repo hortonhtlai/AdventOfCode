@@ -13,9 +13,10 @@ class Solution13 {
     private:
         int summary;
         void findAndAddReflection(const vector<vector<char>> &patternMap);
-        bool checkHorizontalReflection(const vector<vector<char>> &patternMap, int rowNum);
-        bool checkVerticalReflection(const vector<vector<char>> &patternMap, int colNum);
-        bool columnsEqual(const vector<vector<char>> &patternMap, int colNum1, int colNum2);
+        int getDiffIfHorizontalReflection(const vector<vector<char>> &patternMap, int rowNum);
+        int getDiffIfRowsEqual(const vector<vector<char>> &patternMap, int rowNum1, int rowNum2);
+        int getDiffIfVerticalReflection(const vector<vector<char>> &patternMap, int colNum);
+        int getDiffIfColsEqual(const vector<vector<char>> &patternMap, int colNum1, int colNum2);
 };
 
 #endif
