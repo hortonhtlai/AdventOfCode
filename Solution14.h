@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -13,7 +14,12 @@ class Solution14 {
     private:
         int load;
         vector<vector<char>> platform;
-        void slideRockAndAddLoad(int rowNum, int colNum);
+        unordered_map<string, int> cache;
+        void slideRocksNorth();
+        void slideRocksWest();
+        void slideRocksSouth();
+        void slideRocksEast();
+        void addLoad();
 };
 
 #endif
