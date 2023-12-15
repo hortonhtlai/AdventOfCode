@@ -2,6 +2,8 @@
 #define SOLUTION15_H
 
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 using namespace std;
 
@@ -11,7 +13,11 @@ class Solution15 {
 
     private:
         int sum;
-        void addHashValue(const string &step);
+        unordered_map<int, vector<pair<string, int>>> boxes;
+        int getHashValue(const string &step);
+        void removeLens(vector<string> &termVector);
+        void updateLens(vector<string> &termVector);
+        void addFocusingPowers();
 };
 
 #endif
