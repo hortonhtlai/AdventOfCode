@@ -12,8 +12,8 @@ class Solution16 {
         int solve(string& input);
 
     private:
-        int energized;
-        void traceBeamsAndAddEnergized(const vector<vector<char>> &contraption);
+        int maxEnergized;
+        int traceBeamsAndGetEnergized(const vector<vector<char>> &contraption, int beamRow, int beamCol, int beamDirection);
         void processBeamEncounters(char object, const pair<pair<int, int>, int> &nextBeam, stack<pair<pair<int, int>, int>> &toDoBeams);
         void processPositiveMirror(int rowNum, int colNum, int beamDirection, stack<pair<pair<int, int>, int>> &toDoBeams);
         void processNegativeMirror(int rowNum, int colNum, int beamDirection, stack<pair<pair<int, int>, int>> &toDoBeams);

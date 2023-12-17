@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <algorithm>
 
 #include "Solution16.h"
 #include "StringParser.h"
@@ -14,15 +15,22 @@
 using namespace std;
 
 int Solution16::solve(string &input) {
-    energized = 0;
+    maxEnergized = 0;
     StringParser stringParser;
     vector<vector<char>> contraption;
     stringParser.map(contraption, input);
-    traceBeamsAndAddEnergized(contraption);
-    return energized;
+    for (unsigned int colNum = 0; colNum < contraption[0].size(); colNum++) {
+        maxEnergized = max(maxEnergized, traceBeamsAndGetEnergized(contraption, 0, colNum, DOWN));
+        maxEnergized = max(maxEnergized, traceBeamsAndGetEnergized(contraption, contraption.size() - 1, colNum, UP));
+    }
+    for (unsigned int rowNum = 0; rowNum < contraption.size(); rowNum++) {
+        maxEnergized = max(maxEnergized, traceBeamsAndGetEnergized(contraption, rowNum, 0, RIGHT));
+        maxEnergized = max(maxEnergized, traceBeamsAndGetEnergized(contraption, rowNum, contraption[0].size() - 1, LEFT));
+    }
+    return maxEnergized;
 };
 
-void Solution16::traceBeamsAndAddEnergized(const vector<vector<char>> &contraption) {
+int Solution16::traceBeamsAndGetEnergized(const vector<vector<char>> &contraption, int beamRow, int beamCol, int beamDirection) {
     vector<vector<int>> incomingBeams;
     for (unsigned int rowNum = 0; rowNum < contraption.size(); rowNum++) {
         vector<int> row;
@@ -33,7 +41,8 @@ void Solution16::traceBeamsAndAddEnergized(const vector<vector<char>> &contrapti
     }
 
     stack<pair<pair<int, int>, int>> toDoBeams;
-    toDoBeams.push(pair<pair<int, int>, int>(pair<int, int>(0, 0), RIGHT));
+    toDoBeams.push(pair<pair<int, int>, int>(pair<int, int>(beamRow, beamCol), beamDirection));
+    int energized = 0;
 
     while (!toDoBeams.empty()) {
         pair<pair<int, int>, int> nextBeam = toDoBeams.top();
@@ -50,6 +59,8 @@ void Solution16::traceBeamsAndAddEnergized(const vector<vector<char>> &contrapti
             }
         }
     }
+
+    return energized;
 };
 
 void Solution16::processBeamEncounters(char object, const pair<pair<int, int>, int> &nextBeam, stack<pair<pair<int, int>, int>> &toDoBeams) {
