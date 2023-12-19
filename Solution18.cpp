@@ -1,98 +1,197 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
+#include <set>
+#include <stack>
 
 #include "Solution18.h"
 #include "StringParser.h"
 
 using namespace std;
 
-int Solution18::solve(string &input) {
+long long Solution18::solve(string &input) {
     StringParser stringParser;
-    vector<string> directionVector;
-    stringParser.split(directionVector, input, {"\n"});
-    pair<int, int> trenchStart = generateDigArea(directionVector);
-    visualizeTrench(directionVector, trenchStart);
-    for (unsigned int colNum = 0; colNum < topView[0].size(); colNum++) {
-            labelExterior(0, colNum);
-            labelExterior(topView.size() - 1, colNum);
+    vector<string> instructionVector;
+    stringParser.split(instructionVector, input, {"\n"});
+    pair<long long, long long> trenchStart = generateDigArea(instructionVector);
+    visualizeTrench(instructionVector, trenchStart);
+    for (unsigned int colNumCollapsed = 0; colNumCollapsed < topViewCollapsed[0].size(); colNumCollapsed++) {
+            labelExterior(0, colNumCollapsed);
+            labelExterior(topViewCollapsed.size() - 1, colNumCollapsed);
     }
-    for (unsigned int rowNum = 0; rowNum < topView.size(); rowNum++) {
-            labelExterior(rowNum, 0);
-            labelExterior(rowNum, topView[0].size() - 1);
+    for (unsigned int rowNumCollapsed = 0; rowNumCollapsed < topViewCollapsed.size(); rowNumCollapsed++) {
+            labelExterior(rowNumCollapsed, 0);
+            labelExterior(rowNumCollapsed, topViewCollapsed[0].size() - 1);
     }
+    multipleVerticalFactor();
+    multiplyHorizontalFactor();
     return getLagoonSize();
 };
 
-pair<int, int> Solution18::generateDigArea(const vector<string> &directionVector) {
-    int maxRow = 0;
-    int maxCol = 0;
-    int currRow = 0;
-    int currCol = 0;
-    int minRow = 0;
-    int minCol = 0;
+pair<long long, long long> Solution18::generateDigArea(const vector<string> &instructionVector) {
+    long long currRow = 0;
+    long long currCol = 0;
+    set<long long> rowSet;
+    set<long long> colSet;
+    rowSet.insert(currRow);
+    colSet.insert(currCol);
+
     StringParser stringParser;
-    for (const string &direction : directionVector) {
+    for (const string &instruction : instructionVector) {
         vector<string> termVector;
-        stringParser.split(termVector, direction, {" "});
-        if (termVector[0] == "U") {
-            currRow = currRow - stoi(termVector[1]);
-            minRow = min(minRow, currRow);
-        } else if (termVector[0] == "D") {
-            currRow = currRow + stoi(termVector[1]);
-            maxRow = max(maxRow, currRow);
-        } else if (termVector[0] == "L") {
-            currCol = currCol - stoi(termVector[1]);
-            minCol = min(minCol, currCol);
-        } else if (termVector[0] == "R") {
-            currCol = currCol + stoi(termVector[1]);
-            maxCol = max(maxCol, currCol);
+        stringParser.split(termVector, instruction, {" ", "#", "(", ")"});
+        char direction = termVector[2].back();
+        termVector[2].pop_back();
+        if (direction == '0') {
+            currCol = currCol + stoll(termVector[2], nullptr, 16);
+        } else if (direction == '1') {
+            currRow = currRow + stoll(termVector[2], nullptr, 16);
+        } else if (direction == '2') {
+            currCol = currCol - stoll(termVector[2], nullptr, 16);
+        } else if (direction == '3') {
+            currRow = currRow - stoll(termVector[2], nullptr, 16);
         }
+        rowSet.insert(currRow);
+        colSet.insert(currCol);
     }
-    topView = vector<vector<char>>(maxRow - minRow + 1, vector<char>(maxCol - minCol + 1, '.'));
-    return pair<int, int>(0 - minRow, 0 - minCol);
+
+    long long minRow = *rowSet.begin();
+    long long minCol = *colSet.begin();
+
+    for (long long rowNum : rowSet) {
+        rowVectorExpanded.push_back(rowNum - minRow);
+    }
+    for (long long colNum : colSet) {
+        colVectorExpanded.push_back(colNum - minCol);
+    }
+
+    topViewCollapsed = vector<vector<long long>>(2 * rowVectorExpanded.size() - 1, vector<long long>(2 * colVectorExpanded.size() - 1, -1));
+    return pair<long long, long long>(0 - minRow, 0 - minCol);
 };
 
-void Solution18::visualizeTrench(const vector<string> &directionVector, const pair<int, int> &trenchStart) {
-    int rowNum = trenchStart.first;
-    int colNum = trenchStart.second;
-    topView[rowNum][colNum] = '#';
+void Solution18::visualizeTrench(const vector<string> &instructionVector, const pair<long long, long long> &trenchStart) {
+    long long rowNumExpanded = trenchStart.first;
+    long long colNumExpanded = trenchStart.second;
+
+    int rowNumCollapsed = 0;
+    for (unsigned int i = 0; i < rowVectorExpanded.size(); i++) {
+        if (rowVectorExpanded[i] == rowNumExpanded) {
+            rowNumCollapsed = i;
+        }
+    }
+    int colNumCollapsed = 0;
+    for (unsigned int i = 0; i < colVectorExpanded.size(); i++) {
+        if (colVectorExpanded[i] == colNumExpanded) {
+            colNumCollapsed = i;
+        }
+    }
+
+    int currRow = 2 * rowNumCollapsed;
+    int currCol = 2 * colNumCollapsed;
+    topViewCollapsed[currRow][currCol] = 1;
+
     StringParser stringParser;
-    for (const string &direction : directionVector) {
+    for (const string &instruction : instructionVector) {
         vector<string> termVector;
-        stringParser.split(termVector, direction, {" "});
-        for (int meters = 0; meters < stoi(termVector[1]); meters++) {
-            if (termVector[0] == "U") {
-                rowNum--;
-            } else if (termVector[0] == "D") {
-                rowNum++;
-            } else if (termVector[0] == "L") {
-                colNum--;
-            } else if (termVector[0] == "R") {
-                colNum++;
+        stringParser.split(termVector, instruction, {" ", "#", "(", ")"});
+        char direction = termVector[2].back();
+        termVector[2].pop_back();
+        if (direction == '0') {
+            colNumExpanded = colNumExpanded + stoll(termVector[2], nullptr, 16);
+            while (colVectorExpanded[colNumCollapsed] < colNumExpanded) {
+                colNumCollapsed++;
+                currCol++;
+                topViewCollapsed[currRow][currCol] = colVectorExpanded[colNumCollapsed] - colVectorExpanded[colNumCollapsed - 1] - 1;
+                currCol++;
+                topViewCollapsed[currRow][currCol] = 1;
             }
-            topView[rowNum][colNum] = '#';
+        } else if (direction == '1') {
+            rowNumExpanded = rowNumExpanded + stoll(termVector[2], nullptr, 16);
+            while (rowVectorExpanded[rowNumCollapsed] < rowNumExpanded) {
+                rowNumCollapsed++;
+                currRow++;
+                topViewCollapsed[currRow][currCol] = rowVectorExpanded[rowNumCollapsed] - rowVectorExpanded[rowNumCollapsed - 1] - 1;
+                currRow++;
+                topViewCollapsed[currRow][currCol] = 1;
+            }
+        } else if (direction == '2') {
+            colNumExpanded = colNumExpanded - stoll(termVector[2], nullptr, 16);
+            while (colVectorExpanded[colNumCollapsed] > colNumExpanded) {
+                colNumCollapsed--;
+                currCol--;
+                topViewCollapsed[currRow][currCol] = colVectorExpanded[colNumCollapsed + 1] - colVectorExpanded[colNumCollapsed] - 1;
+                currCol--;
+                topViewCollapsed[currRow][currCol] = 1;
+            }
+        } else if (direction == '3') {
+            rowNumExpanded = rowNumExpanded - stoll(termVector[2], nullptr, 16);
+            while (rowVectorExpanded[rowNumCollapsed] > rowNumExpanded) {
+                rowNumCollapsed--;
+                currRow--;
+                topViewCollapsed[currRow][currCol] = rowVectorExpanded[rowNumCollapsed + 1] - rowVectorExpanded[rowNumCollapsed] - 1;
+                currRow--;
+                topViewCollapsed[currRow][currCol] = 1;
+            }
         }
     }
 };
 
 void Solution18::labelExterior(int rowNum, int colNum) {
-    if (rowNum >= 0 && rowNum < (int) topView.size() && colNum >= 0 && colNum < (int) topView[0].size() && topView[rowNum][colNum] == '.') {
-        topView[rowNum][colNum] = 'X';
-        labelExterior(rowNum + 1, colNum);
-        labelExterior(rowNum - 1, colNum);
-        labelExterior(rowNum, colNum + 1);
-        labelExterior(rowNum, colNum - 1);
+    stack<pair<int, int>> frontier;
+    frontier.push(pair<int, int>(rowNum, colNum));
+    while (!frontier.empty()) {
+        pair<int, int> currPosition = frontier.top();
+        rowNum = currPosition.first;
+        colNum = currPosition.second;
+        frontier.pop();
+        if (rowNum >= 0 && rowNum < (long long) topViewCollapsed.size() && colNum >= 0 && colNum < (long long) topViewCollapsed[0].size() && topViewCollapsed[rowNum][colNum] == -1) {
+            topViewCollapsed[rowNum][colNum] = 0;
+            frontier.push(pair<int, int>(rowNum + 1, colNum));
+            frontier.push(pair<int, int>(rowNum - 1, colNum));
+            frontier.push(pair<int, int>(rowNum, colNum + 1));
+            frontier.push(pair<int, int>(rowNum, colNum - 1));
+        }
     }
 }
 
-int Solution18::getLagoonSize() {
-    int size = 0;
-    for (unsigned int rowNum = 0; rowNum < topView.size(); rowNum++) {
-        for (unsigned int colNum = 0; colNum < topView[0].size(); colNum++) {
-            if (topView[rowNum][colNum] != 'X') {
-                size++;
+void Solution18::multipleVerticalFactor() {
+    for (unsigned int colNumCollapsed = 0; colNumCollapsed < topViewCollapsed[0].size(); colNumCollapsed++) {
+        long long colFactor = 0;
+        for (unsigned int rowNumCollapsed = 0; rowNumCollapsed < topViewCollapsed.size(); rowNumCollapsed++) {
+            if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] != 0) {
+                if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] > 0 && colFactor == 0) {
+                    colFactor = topViewCollapsed[rowNumCollapsed][colNumCollapsed];
+                } else if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] < 0) {
+                    topViewCollapsed[rowNumCollapsed][colNumCollapsed] = topViewCollapsed[rowNumCollapsed][colNumCollapsed] * colFactor;
+                }
+            }
+        }
+    }
+};
+
+void Solution18::multiplyHorizontalFactor() {
+    for (unsigned int rowNumCollapsed = 0; rowNumCollapsed < topViewCollapsed.size(); rowNumCollapsed++) {    
+        long long rowFactor = 0;
+        for (unsigned int colNumCollapsed = 0; colNumCollapsed < topViewCollapsed[0].size(); colNumCollapsed++) {
+            if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] != 0) {
+                if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] > 0 && rowFactor == 0) {
+                    rowFactor = topViewCollapsed[rowNumCollapsed][colNumCollapsed];
+                } else if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] < 0) {
+                    topViewCollapsed[rowNumCollapsed][colNumCollapsed] = topViewCollapsed[rowNumCollapsed][colNumCollapsed] * rowFactor;
+                }
+            }
+        }
+    }
+};
+
+long long Solution18::getLagoonSize() {
+    long long size = 0;
+    for (unsigned int rowNumCollapsed = 0; rowNumCollapsed < topViewCollapsed.size(); rowNumCollapsed++) {
+        for (unsigned int colNumCollapsed = 0; colNumCollapsed < topViewCollapsed[0].size(); colNumCollapsed++) {
+            if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] < 0) {
+                size = size - topViewCollapsed[rowNumCollapsed][colNumCollapsed];
+            } else if (topViewCollapsed[rowNumCollapsed][colNumCollapsed] > 0) {
+                size = size + topViewCollapsed[rowNumCollapsed][colNumCollapsed];
             }
         }
     }

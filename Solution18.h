@@ -8,14 +8,18 @@ using namespace std;
 
 class Solution18 {
     public:
-        int solve(string &input);
+        long long solve(string &input);
     
     private:
-        vector<vector<char>> topView;
-        pair<int, int> generateDigArea(const vector<string> &directionVector);
-        void visualizeTrench(const vector<string> &directionVector, const pair<int, int> &trenchStart);
+        vector<long long> rowVectorExpanded;
+        vector<long long> colVectorExpanded;
+        vector<vector<long long>> topViewCollapsed;
+        pair<long long, long long> generateDigArea(const vector<string> &instructionVector);
+        void visualizeTrench(const vector<string> &instructionVector, const pair<long long, long long> &trenchStart);
         void labelExterior(int rowNum, int colNum);
-        int getLagoonSize();
+        void multipleVerticalFactor();
+        void multiplyHorizontalFactor();
+        long long getLagoonSize();
 };
 
 #endif
