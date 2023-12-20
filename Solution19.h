@@ -4,19 +4,21 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <stack>
 
 using namespace std;
 
 class Solution19 {
     public:
-        int solve(string &input);
+        long long solve(string &input);
 
     private:
-        int sum;
+        long long sum;
         unordered_map<string, vector<string>> workflowMap;
-        void sendThroughWorkflow(const vector<int> &input, vector<string> workflow);
-        void addRatings(const vector<int> &input);
-        int makeDecision(const vector<int> &ratingVector, const string &step);
+        void sendThroughWorkflow(const vector<int> &input, const string &workflowName);
+        void addRatings(const vector<int> &ratingVector);
+        void addCombinations(const vector<int> &ratingVector);
+        int makeDecision(const vector<int> &ratingVector, const pair<string, int> &workflow, stack<vector<int>> &partStack, stack<pair<string, int>> &workflowStack);
 };
 
 #endif
