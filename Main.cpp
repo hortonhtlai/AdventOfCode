@@ -1,18 +1,24 @@
 #include <iostream>
 #include <string>
 
-#include "Solution20.h"
+#include "Solution21.h"
 #include "StringParser.h"
 
 using namespace std;
 
 int main()
 {
-    string input = R"(broadcaster -> a
-%a -> inv, con
-&inv -> b
-%b -> con
-&con -> output)";
-    Solution20 solution;
+    string input = R"(...........
+.....###.#.
+.###.##..#.
+..#.#...#..
+....#.#....
+.##..S####.
+.##..#...#.
+.......##..
+.##.#.####.
+.##..##.##.
+...........)";
+    Solution21 solution;
     cout << solution.solve(input);
 }
